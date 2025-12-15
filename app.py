@@ -7,39 +7,43 @@ from sklearn.metrics import mean_squared_error, r2_score
 st.title("📊 Analisis Clustering & Regresi Siswa")
 
 # =====================
-# LOAD DATA (NAMA FILE SESUAI GITHUB)
+# LOAD DATA
 # =====================
 df = pd.read_csv("dataset tubes dt.csv")
 
 st.subheader("Dataset Siswa")
 st.write("Ukuran dataset:", df.shape)
+st.write("Nama kolom:", df.columns.tolist())
 st.dataframe(df.head())
 
 # =====================
-# TABEL RINGKASAN CLUSTER
+# CEK KOLOM CLUSTER
 # =====================
 st.subheader("Ringkasan Cluster")
 
-cluster_summary = df["cluster"].value_counts().reset_index()
-cluster_summary.columns = ["Cluster", "Jumlah Data"]
-cluster_summary = cluster_summary.sort_values("Cluster")
+if "cluster" in df.columns:
+    cluster_summary = df["cluster"].value_counts().reset_index()
+    cluster_summary.columns = ["Cluster", "Jumlah Data"]
+    cluster_summary = cluster_summary.sort_values("Cluster")
+    st.dataframe(cluster_summary)
 
-st.dataframe(cluster_summary)
+    # =====================
+    # VISUALISASI CLUSTER
+    # =====================
+    st.subheader("Visualisasi Clustering")
+
+    fig1 = plt.figure()
+    plt.scatter(df["jam_belajar"], df["nilai_tugas"], c=df["cluster"])
+    plt.xlabel("Jam Belajar")
+    plt.ylabel("Nilai Tugas")
+    plt.title("Hasil Clustering Siswa")
+    st.pyplot(fig1)
+
+else:
+    st.warning("Kolom 'cluster' belum ada di dataset. Clustering belum disimpan ke file CSV.")
 
 # =====================
-# VISUALISASI CLUSTER
-# =====================
-st.subheader("Visualisasi Clustering")
-
-fig1 = plt.figure()
-plt.scatter(df["jam_belajar"], df["nilai_tugas"], c=df["cluster"])
-plt.xlabel("Jam Belajar")
-plt.ylabel("Nilai Tugas")
-plt.title("Hasil Clustering Siswa")
-st.pyplot(fig1)
-
-# =====================
-# REGRESI LINEAR (TANPA GRAFIK)
+# REGRESI LINEAR
 # =====================
 st.subheader("Regresi Linear")
 
@@ -57,3 +61,4 @@ r2 = r2_score(y, y_pred)
 st.write("### Hasil Evaluasi Model")
 st.write("MSE :", mse)
 st.write("R2  :", r2)
+
