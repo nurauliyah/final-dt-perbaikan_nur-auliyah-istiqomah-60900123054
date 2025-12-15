@@ -4,10 +4,8 @@ import matplotlib.pyplot as plt
 
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
 
-st.title("📊 Analisis Clustering & Regresi Siswa")
+st.title("📊 Clustering Aktivitas & Hasil Belajar Siswa")
 
 # =====================
 # LOAD DATASET
@@ -32,45 +30,47 @@ kmeans = KMeans(n_clusters=3, random_state=42)
 df["cluster"] = kmeans.fit_predict(X_scaled)
 
 # =====================
-# TABEL RINGKASAN CLUSTER
+# RINGKASAN JUMLAH CLUSTER
 # =====================
+st.subheader("Jumlah Data Tiap Cluster")
+
 cluster_summary = df["cluster"].value_counts().reset_index()
 cluster_summary.columns = ["Cluster", "Jumlah Data"]
 cluster_summary = cluster_summary.sort_values("Cluster")
 
-st.write("Ringkasan Cluster")
 st.dataframe(cluster_summary)
+
+# =====================
+# INTI: AKTIVITAS & HASIL BELAJAR
+# =====================
+st.subheader("Karakteristik Aktivitas & Hasil Belajar per Cluster")
+
+cluster_profile = (
+    df.groupby("cluster")[["jam_belajar", "kehadiran", "nilai_tugas"]]
+    .mean()
+    .reset_index()
+)
+
+cluster_profile.columns = [
+    "Cluster",
+    "Rata-rata Jam Belajar",
+    "Rata-rata Kehadiran",
+    "Rata-rata Nilai Tugas"
+]
+
+st.dataframe(cluster_profile)
 
 # =====================
 # VISUALISASI CLUSTER
 # =====================
 st.subheader("Visualisasi Clustering")
 
-fig1 = plt.figure()
+fig = plt.figure()
 plt.scatter(df["jam_belajar"], df["nilai_tugas"], c=df["cluster"])
 plt.xlabel("Jam Belajar")
 plt.ylabel("Nilai Tugas")
 plt.title("Hasil Clustering Siswa")
-st.pyplot(fig1)
+st.pyplot(fig)
 
-# =====================
-# REGRESI LINEAR
-# =====================
-st.subheader("Regresi Linear")
-
-X = df[["jam_belajar", "kehadiran", "nilai_tugas"]]
-y = df["nilai_akhir"]
-
-model = LinearRegression()
-model.fit(X, y)
-
-y_pred = model.predict(X)
-
-mse = mean_squared_error(y, y_pred)
-r2 = r2_score(y, y_pred)
-
-st.write("### Hasil Regresi Linear")
-st.write("MSE :", mse)
-st.write("R²  :", r2)
 
 
