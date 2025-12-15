@@ -7,9 +7,9 @@ from sklearn.metrics import mean_squared_error, r2_score
 st.title("📊 Analisis Clustering & Regresi Siswa")
 
 # =====================
-# LOAD DATA
+# LOAD DATA (NAMA FILE SESUAI GITHUB)
 # =====================
-df = pd.read_csv("dataset_tubes_dt.csv")
+df = pd.read_csv("dataset tubes dt.csv")
 
 st.subheader("Dataset Siswa")
 st.write("Ukuran dataset:", df.shape)
